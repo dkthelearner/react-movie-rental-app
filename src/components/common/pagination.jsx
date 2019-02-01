@@ -1,6 +1,13 @@
 import React from "react";
 import _ from "lodash";
 
+/**
+ * TODO: Pagination Refractring
+ * 1. Default properties
+ * 2. Properties validation
+ *
+ * @param {} props
+ */
 const Pagination = props => {
   const { totalItems: items, pageSize, currentPage, onPageChange } = props;
   const noOfPage = Math.ceil(items / pageSize);
@@ -17,9 +24,9 @@ const Pagination = props => {
             className={currentPage === page ? "page-item active" : "page-item"}
             key={page}
           >
-            <a onClick={() => onPageChange(page)} className="page-link">
+            <button className="page-link" onClick={() => onPageChange(page)}>
               {page}
-            </a>
+            </button>
           </li>
         ))}
       </ul>
@@ -27,13 +34,8 @@ const Pagination = props => {
   );
 };
 
-//Pagination.defaultProps = {};
-
-console.dir(Pagination);
-/**
- *  TODO:
- *  Default Parameter
- *  Properties types
- */
-
+Pagination.defaultProps = {
+  pageSize: 4,
+  currentPage: 1
+};
 export default Pagination;

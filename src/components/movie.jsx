@@ -3,13 +3,14 @@ import { getMovies } from "../services/fakeMovieService";
 import Pagination from "./common/pagination";
 import { paginate } from "../util/paginate";
 import ListGroup from "./common/listGroup";
+import _ from "lodash";
 import { getGenres } from "../services/fakeGenreService";
 
 class Movies extends Component {
   state = {
     movies: [],
     genres: [],
-    pageSize: 4,
+    pageSize: 6,
     currentPage: 1
   };
   componentDidMount() {
@@ -26,10 +27,16 @@ class Movies extends Component {
   handlePageChange = page => {
     this.setState({ currentPage: page });
   };
-  handlePageSize = e => {
-    this.setState({ pageSize: e.target.value });
-  };
   handleItemSelect = genre => {
+    const movies = [...getMovies()];
+    const filterMovies = [...getMovies()].filter(
+      movie => movie.genre._id === genre._id
+    );
+    this.setState({
+      movies: genre._id ? filterMovies : movies,
+      currentPage: 1,
+      selectedItem: genre
+    });
     console.log("Item Selected !", genre);
   };
   render() {
@@ -47,42 +54,30 @@ class Movies extends Component {
               onClick={() => this.handleRefresh()}
               className="btn btn-secondary btn-sm"
             >
-              Refersh
+              Refresh
             </button>
           </div>
         </div>
       );
     }
 
-    const { movies, currentPage, pageSize, genres } = this.state;
+    const { movies, currentPage, pageSize, genres, selectedItem } = this.state;
 
     const filtered = paginate(movies, currentPage, pageSize);
+
     return (
       <div className="row">
         <div className="col-3">
-          <ListGroup listItems={genres} onItemSelect={this.handleItemSelect} />
+          <ListGroup
+            listItems={genres}
+            selectedItem={selectedItem}
+            onItemSelect={this.handleItemSelect}
+          />
         </div>
         <div className="col">
-          <div className="row">
-            <div className="col-10">
-              <p className="text text-secondary">
-                Showing {filtered.length} movie from database.
-              </p>
-            </div>
-            <div className="col">
-              <select
-                className="custom-select"
-                name="pageSize"
-                id="pageSize"
-                onChange={this.handlePageSize}
-              >
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-              </select>
-            </div>
-          </div>
-
+          <p className="text text-secondary">
+            Showing {filtered.length} movie from database.
+          </p>
           <table className="table table-sm">
             <thead>
               <tr>
@@ -95,7 +90,7 @@ class Movies extends Component {
             </thead>
             <tbody>
               {filtered.map(movie => (
-                <tr key={movie._id} className="text text-secondary">
+                <tr key={movie._id}>
                   <td>{movie.title}</td>
                   <td>{movie.genre.name}</td>
                   <td>{movie.numberInStock}</td>
@@ -112,7 +107,6 @@ class Movies extends Component {
               ))}
             </tbody>
           </table>
-
           <Pagination
             totalItems={count}
             pageSize={this.state.pageSize}
@@ -120,7 +114,6 @@ class Movies extends Component {
             onPageChange={this.handlePageChange}
           />
         </div>
-        <div className="col-2" />
       </div>
     );
   }
