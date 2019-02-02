@@ -1,16 +1,9 @@
 import React from "react";
 import _ from "lodash";
 
-/**
- * TODO: Pagination Refractring
- * 1. Default properties
- * 2. Properties validation
- *
- * @param {} props
- */
 const Pagination = props => {
-  const { totalItems: items, pageSize, currentPage, onPageChange } = props;
-  const noOfPage = Math.ceil(items / pageSize);
+  const { totalCount, pageSize, currentPage, onPageChange } = props;
+  const noOfPage = Math.ceil(totalCount / pageSize);
   const pages = _.range(1, noOfPage + 1);
 
   if (noOfPage === 1) {
