@@ -1,41 +1,53 @@
 import React, { Component } from "react";
+import Input from "./common/input";
 
 class LoginForm extends Component {
-  username = React.createRef();
+  state = {
+    account: { username: "", password: "" },
+    errors: {}
+  };
+  validate = () => {
+    const { account } = this.state;
+    const errors = { ...this.state.errors };
+    if (account.username.trim() === "") {
+      errors["username"] = "Username is required.";
+    }
+    if (account.password.trim() === "") {
+      errors["username"] = "Password is required.";
+    }
+    return errors;
+  };
   handleSubmit = e => {
     e.preventDefault();
-    console.log(e);
+    const errors = this.validate();
+    if (errors) return;
   };
-  componentDidMount() {
-    console.log(this.username);
-  }
+  handleChange = ({ currentTarget: input }) => {
+    const account = { ...this.state.account };
+    account[input.name] = input.value;
+    this.setState({ account });
+  };
   render() {
+    const { account, errors } = this.state;
     return (
       <div className="row">
-        <div className="col-5 m-auto">
-          <h1>Login</h1>
+        <div className="col-6 m-auto">
+          <h3>Login Form</h3>
           <form onSubmit={this.handleSubmit} className="align-items-center">
-            <div className="form-group">
-              <label htmlFor="username" className="form-label">
-                Username
-              </label>
-              <input
-                id="username"
-                type="text"
-                ref={this.username}
-                className="form-control"
-                placeholder="Enter Username"
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="password">Password</label>
-              <input
-                type="password"
-                className="form-control"
-                id="password"
-                placeholder="Password"
-              />
-            </div>
+            <Input
+              name="username"
+              label="Username"
+              placeholder="Enter Username"
+              value={account.username}
+              onChange={this.handleChange}
+            />
+            <Input
+              name="password"
+              label="Password"
+              placeholder="Enter Password"
+              value={account.password}
+              onChange={this.handleChange}
+            />
             <button className="btn btn-primary">Login</button>
           </form>
         </div>
